@@ -16,6 +16,13 @@ def colorWipe(strip, color, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
+def reverseColorWipe(strip, color, wait_ms=50):
+    """Wipe color across display a pixel at a time."""
+    for i in range(strip.numPixels(), -1, -1):
+        strip.setPixelColor(i, color)
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
 
 def theaterChase(strip, color, wait_ms=50, iterations=10):
     """Movie theater light style chaser animation."""
@@ -30,15 +37,15 @@ def theaterChase(strip, color, wait_ms=50, iterations=10):
 
 
 def wheel(pos):
-    """Generate rainbow colors across 0-255 positions."""
+    """Generate "valentine" rainbow colors across 0-255 positions."""
     if pos < 85:
-        return ws.Color(pos * 3, 255 - pos * 3, 0)
+        return ws.Color(255, pos, 0)
     elif pos < 170:
         pos -= 85
-        return ws.Color(255 - pos * 3, 0, pos * 3)
+        return ws.Color(255, 0, pos)
     else:
         pos -= 170
-        return ws.Color(0, pos * 3, 255 - pos * 3)
+        return ws.Color(255, pos, 255 - pos * 3)
 
 
 def rainbow(strip, wait_ms=20, iterations=1):
@@ -69,6 +76,38 @@ def theaterChaseRainbow(strip, wait_ms=50):
             time.sleep(wait_ms/1000.0)
             for i in range(0, strip.numPixels(), 3):
                 strip.setPixelColor(i+q, 0)
+
+
+def hex2rgb(hex):
+    """Convert a hex string to an rgb tuple of ints"""
+    return tuple(int(hex[i:i+2], 16) for i in (0,2,4))
+
+
+def valentineColors(strip, wait_ms=50, iterations=1):
+    """Valentine colors that do stuff"""
+    hexcolors = ("882BDE",
+                 "C71585",
+                 "FF0000",
+                 "FF3333")
+    colors = [ws.Color(*hex2rgb(c)) for c in hexcolors]
+
+    for j in range(256*iterations):
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, colors[(i + j) % len(colors)])
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
+
+def theaterChaseCustom(strip, hexcolors=("FF000", "00FF00", "0000FF"), wait_ms=50, iterations=1):
+    """Theater chase with multiple colors"""
+    # convert colors from hex to rgb
+    colors = [ws.Color(*hex2rgb(c)) for c in hexcolors]
+
+    for j in range(256*iterations):
+        for i in range(strip.numPixels()):
+            strip.setPixelColor(i, colors[(i + j) % len(colors)])
+        strip.show()
+        time.sleep(wait_ms/1000.0)
 
 
 if __name__ == '__main__':
@@ -113,25 +152,7 @@ if __name__ == '__main__':
     try:
 
         while True:
-            print ('Color wipe animations.')
-            print ('  Red wipe')
-            colorWipe(strip, ws.Color(255, 0, 0))  # Red wipe
-            print ('  Blue wipe')
-            colorWipe(strip, ws.Color(0, 255, 0))  # Blue wipe
-            print ('  Green wipe')
-            colorWipe(strip, ws.Color(0, 0, 255))  # Green wipe
-            print ('Theater chase animations.')
-            print ('  White theater chase')
-            theaterChase(strip, ws.Color(127, 127, 127))  # White theater chase
-            print ('  Red theater chase')
-            theaterChase(strip, ws.Color(127,   0,   0))  # Red theater chase
-            print ('  Green theater chase')
-            theaterChase(strip, ws.Color(  0,   0, 127))  # Green theater chase
-            print ('Rainbow animations.')
-            rainbow(strip)
-            rainbowCycle(strip)
-            theaterChaseRainbow(strip)
-
+            theaterChaseCustom(strip, ("882BDE", "C71585", "FF0000", "FF3333"), 100)
     except KeyboardInterrupt:
         if args.clear:
             colorWipe(strip, ws.Color(0,0,0), 10)

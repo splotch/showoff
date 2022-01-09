@@ -16,6 +16,13 @@ def colorWipe(strip, color, wait_ms=50):
         strip.show()
         time.sleep(wait_ms/1000.0)
 
+def reverseColorWipe(strip, color, wait_ms=50):
+    """Wipe color across display a pixel at a time."""
+    for i in range(strip.numPixels(), -1, -1):
+        strip.setPixelColor(i, color)
+        strip.show()
+        time.sleep(wait_ms/1000.0)
+
 
 def theaterChase(strip, color, wait_ms=50, iterations=10):
     """Movie theater light style chaser animation."""
@@ -113,25 +120,8 @@ if __name__ == '__main__':
     try:
 
         while True:
-            print ('Color wipe animations.')
-            print ('  Red wipe')
-            colorWipe(strip, ws.Color(255, 0, 0))  # Red wipe
-            print ('  Blue wipe')
-            colorWipe(strip, ws.Color(0, 255, 0))  # Blue wipe
-            print ('  Green wipe')
-            colorWipe(strip, ws.Color(0, 0, 255))  # Green wipe
-            print ('Theater chase animations.')
-            print ('  White theater chase')
-            theaterChase(strip, ws.Color(127, 127, 127))  # White theater chase
-            print ('  Red theater chase')
-            theaterChase(strip, ws.Color(127,   0,   0))  # Red theater chase
-            print ('  Green theater chase')
-            theaterChase(strip, ws.Color(  0,   0, 127))  # Green theater chase
-            print ('Rainbow animations.')
-            rainbow(strip)
-            rainbowCycle(strip)
-            theaterChaseRainbow(strip)
-
+            colorWipe(strip, ws.Color(255, 0, 0), 10)  # Red wipe
+            reverseColorWipe(strip, ws.Color(0, 0, 0), 10)  # Blank reverse wipe
     except KeyboardInterrupt:
         if args.clear:
             colorWipe(strip, ws.Color(0,0,0), 10)
